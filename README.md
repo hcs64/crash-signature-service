@@ -8,10 +8,10 @@ It works with several languages (including C/C++ and Java at the moment), and is
 
 ```bash
 $ http --json post 'https://crash-signature-service.herokuapp.com/sign?lang=c' \
-frames:='["NtWaitForMultipleObjects", "WaitForMultipleObjectsEx", \
-"WaitForMultipleObjectsExImplementation", "RealMsgWaitForMultipleObjectsEx", \
-"MsgWaitForMultipleObjects", "F_1152915508___________________________________", \
-"F2166389_____________________________________________________________________"]'
+    frames:='["NtWaitForMultipleObjects", "WaitForMultipleObjectsEx", \
+    "WaitForMultipleObjectsExImplementation", "RealMsgWaitForMultipleObjectsEx", \
+    "MsgWaitForMultipleObjects", "F_1152915508___________________________________", \
+    "F2166389_____________________________________________________________________"]'
 ```
 
 Returns:
