@@ -24,5 +24,8 @@ class SignatureToolBase(object):
 
         return signature, signature_notes
 
-    def _do_generate(self, source_list, crashed_thread):
+    def _do_generate(self, frames, crashed_thread):
+        """Return a tuple (signature, signature_notes), where `signature` is
+        the signature generated from the frames list, and `signature_notes`
+        is a list of notes made by the algorithm during generation. """
         raise NotImplementedError

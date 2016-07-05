@@ -14,20 +14,11 @@ class JavaSignatureTool(SignatureToolBase):
     def join_ignore_empty(delimiter, list_of_strings):
         return delimiter.join(x for x in list_of_strings if x)
 
-    def _do_generate(self, source, crashed_thread):
+    def _do_generate(self, frames, crashed_thread):
         signature_notes = []
+
         try:
-            source_list = [x.strip() for x in source.splitlines()]
-        except AttributeError:
-            signature_notes.append(
-                'JavaSignatureTool: stack trace not in expected format'
-            )
-            return (
-                "EMPTY: Java stack trace not in expected format",
-                signature_notes
-            )
-        try:
-            java_exception_class, description = source_list[0].split(':', 1)
+            java_exception_class, description = frames[0].split(':', 1)
             java_exception_class = java_exception_class.strip()
             # relace all hex addresses in the description by the string <addr>
             description = self.java_hex_addr_killer.sub(
@@ -35,7 +26,7 @@ class JavaSignatureTool(SignatureToolBase):
                 description
             ).strip()
         except ValueError:
-            java_exception_class = source_list[0]
+            java_exception_class = frames[0]
             description = ''
             signature_notes.append(
                 'JavaSignatureTool: stack trace line 1 is '
@@ -45,7 +36,7 @@ class JavaSignatureTool(SignatureToolBase):
             java_method = re.sub(
                 self.java_line_number_killer,
                 '.java)',
-                source_list[1]
+                frames[1]
             )
             if not java_method:
                 signature_notes.append(
@@ -68,7 +59,7 @@ class JavaSignatureTool(SignatureToolBase):
             # just use the following line as the replacement for this entire
             # if/else block
             signature = self.join_ignore_empty(
-                settings.DELIMITER,
+                settings.JAVA_DELIMITER,
                 (java_exception_class, description, java_method)
             )
         else:
@@ -77,12 +68,12 @@ class JavaSignatureTool(SignatureToolBase):
                 (description, java_method)
             )
             signature = self.join_ignore_empty(
-                settings.DELIMITER,
+                settings.JAVA_DELIMITER,
                 (java_exception_class, description_java_method_phrase)
             )
 
-        if len(signature) > self.max_len:
-            signature = settings.DELIMITER.join(
+        if len(signature) > settings.SIGNATURE_MAX_LENGTH:
+            signature = settings.JAVA_DELIMITER.join(
                 (java_exception_class, java_method)
             )
             signature_notes.append(
@@ -91,3 +82,6 @@ class JavaSignatureTool(SignatureToolBase):
             )
 
         return signature, signature_notes
+
+# An alias used to import at runtime.
+SignatureTool = JavaSignatureTool
